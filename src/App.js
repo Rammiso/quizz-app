@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import questions from "./Questions";
+import correctSoundFile from "./sounds/correct.mp3";
+import wrongSoundFile from "./sounds/inccorrect.mp3";
+import timerSoundFile from "./sounds/timer.mp3";
 
 function shuffleArray(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -15,8 +18,6 @@ export default function App() {
   const [timeLeft, setTimeLeft] = useState(15);
   const unanswered = useRef(0);
 
-  // const [style, setStyle] = useState({});
-  // const style = { color: "#d11768" };
   function handleBt() {
     if (nextQ < question.length - 1) {
       setNextQ((prev) => prev + 1);
@@ -33,7 +34,11 @@ export default function App() {
       setSelected(index);
       if (index === question[nextQ].answerIndex) {
         setCorrectScore((sc) => sc + 1);
-      } else setIncorrectScore((is) => is + 1);
+        new Audio(correctSoundFile).play();
+      } else {
+        setIncorrectScore((is) => is + 1);
+        new Audio(wrongSoundFile).play();
+      }
     }
   }
   function handleRetake() {
@@ -42,6 +47,7 @@ export default function App() {
     setCorrectScore(0);
     setIncorrectScore(0);
     setQuestion(shuffleArray(questions));
+    unanswered.current = 0;
   }
   // function handleCorrectScore() {
   //   setCorrectScore((sc) => sc + 1);
@@ -50,6 +56,7 @@ export default function App() {
   useEffect(
     function () {
       if (timeLeft === 0) {
+        // new Audio(timerSoundFile).play();
         unanswered.current += 1;
         handleBt();
 
@@ -72,6 +79,16 @@ export default function App() {
           <h2>✅ Correct Answer: {correctScore}</h2>
           <h2>❌ Wrong Answer: {incorrectScore}</h2>
           <h2>Unanswered Question: {unanswered.current}</h2>
+          <h2>Score Percentage: {(correctScore / question.length) * 100}%</h2>
+          <h3>
+            {(correctScore / question.length) * 100 > 80 ? (
+              "Excellent 👏🏼"
+            ) : (correctScore / question.length) * 100 > 50 ? (
+              "Good job👋🏼"
+            ) : (
+              <span style={{ color: "red" }}>Keep Practicing ❕</span>
+            )}
+          </h3>
           <p>Do you want to retake again?</p>
           If yes click:{" "}
           <button className="again-bt" onClick={handleRetake}>
@@ -81,7 +98,7 @@ export default function App() {
       ) : (
         <>
           <div className="score">
-            <p>⌚ Time left: {timeLeft}</p>
+            <b>⌚ Time left: {timeLeft}</b>
             <p>❔ Total Questions: {question.length}</p>
             <p>✅ Correct Answer: {correctScore}</p>
             <p>❌ Wrong Answer: {incorrectScore}</p>
@@ -103,14 +120,14 @@ export default function App() {
                   }
                 }
                 return (
-                  <p
+                  <button
                     key={i}
                     className={`choice `}
                     style={{ backgroundColor: bgColor, cursor: "pointer" }}
                     onClick={() => handleChoice(i)}
                   >
                     {el}
-                  </p>
+                  </button>
                 );
               })}
             </div>
