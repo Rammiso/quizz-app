@@ -134,7 +134,9 @@ export default function App() {
           </div>
           {disableNext && (
             <div className=" next-bt">
-              <button onClick={handleBt}>Next</button>
+              <button onClick={handleBt} disabled={!disableNext}>
+                Next
+              </button>
             </div>
           )}
         </>
