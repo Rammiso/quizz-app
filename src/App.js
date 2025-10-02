@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import questions from "./Questions";
 import correctSoundFile from "./sounds/correct.mp3";
 import wrongSoundFile from "./sounds/inccorrect.mp3";
@@ -18,7 +18,7 @@ export default function App() {
   const [userAnswer, setUserAnswer] = useState([]);
   const unanswered = useRef(0);
 
-  function handleBt() {
+  const handleBt = useCallback(() => {
     if (nextQ < question.length - 1) {
       setNextQ((prev) => prev + 1);
       setSelected(null);
@@ -27,7 +27,7 @@ export default function App() {
       setFinished(true); // mark quiz as done
     }
     setDisableNext(false);
-  }
+  }, [nextQ, question.length]);
   function handleChoice(index) {
     setUserAnswer((ans) => [...ans, index]);
     console.log(userAnswer);
