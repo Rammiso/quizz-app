@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import questions from "./Questions";
 import correctSoundFile from "./sounds/correct.mp3";
 import wrongSoundFile from "./sounds/inccorrect.mp3";
-import timerSoundFile from "./sounds/timer.mp3";
 
 function shuffleArray(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -16,6 +15,7 @@ export default function App() {
   const [incorrectScore, setIncorrectScore] = useState(0);
   const [disableNext, setDisableNext] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
+  const [userAnswer, setUserAnswer] = useState([]);
   const unanswered = useRef(0);
 
   function handleBt() {
@@ -29,6 +29,8 @@ export default function App() {
     setDisableNext(false);
   }
   function handleChoice(index) {
+    setUserAnswer((ans) => [...ans, index]);
+    console.log(userAnswer);
     setDisableNext(true);
     if (selected === null) {
       setSelected(index);
@@ -68,7 +70,7 @@ export default function App() {
       }, 1000);
       return () => clearInterval(timer);
     },
-    [timeLeft]
+    [timeLeft, handleBt]
   );
 
   return (
